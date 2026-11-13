@@ -1,1 +1,133 @@
-1d13de3c43e40d596190c58d3db5dd9382f3e92f144c50f81c2bceca17b96551751813861326ff1d49d1b221e56b7d5e27914bd8b063242b436e184b47460a55
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pi Puzzle 2026</title>
+  <style>
+    body {
+      font-family: Tahoma, sans-serif;
+      background: linear-gradient(135deg, #2b1055, #7597de);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 10px;
+      color: #ffd700;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+    p {
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 90px);
+      grid-gap: 10px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .tile {
+      width: 90px;
+      height: 90px;
+      background: #ffffff;
+      color: #2b1055;
+      font-size: 28px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.1s;
+    }
+    .tile:active {
+      transform: scale(0.95);
+    }
+    .empty {
+      background: transparent;
+      cursor: default;
+    }
+    button {
+      margin-top: 25px;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #ffd700;
+      color: #2b1055;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Pi Puzzle 2026</h1>
+  <p>اعداد را به ترتیب از ۱ تا ۸ بچینید</p>
+  <div class="board" id="board"></div>
+  <button onclick="shuffle()">شروع مجدد بازی</button>
+
+  <script>
+    let tiles = [1, 2, 3, 4, 5, 6, 7, 8, null];
+    const board = document.getElementById('board');
+
+    function render() {
+      board.innerHTML = '';
+      tiles.forEach((tile, index) => {
+        const div = document.createElement('div');
+        div.className = tile ? 'tile' : 'tile empty';
+        div.textContent = tile || '';
+        div.onclick = () => move(index);
+        board.appendChild(div);
+      });
+    }
+
+    function move(index) {
+      const emptyIndex = tiles.indexOf(null);
+      const validMoves = [
+        emptyIndex - 1, emptyIndex + 1,
+        emptyIndex - 3, emptyIndex + 3
+      ];
+      if (validMoves.includes(index) &&
+         !(emptyIndex % 3 === 0 && index % 3 === 2) &&
+         !(emptyIndex % 3 === 2 && index % 3 === 0)) {
+        [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
+        render();
+        checkWin();
+      }
+    }
+
+    function shuffle() {
+      for (let i = 0; i < 100; i++) {
+        const emptyIndex = tiles.indexOf(null);
+        const neighbors = [emptyIndex - 1, emptyIndex + 1, emptyIndex - 3, emptyIndex + 3]
+          .filter(n => n >= 0 && n < 9 &&
+            !(emptyIndex % 3 === 0 && n % 3 === 2) &&
+            !(emptyIndex % 3 === 2 && n % 3 === 0));
+        const rand = neighbors[Math.floor(Math.random() * neighbors.length)];
+        [tiles[rand], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[rand]];
+      }
+      render();
+    }
+
+    function checkWin() {
+      if (tiles.slice(0, 8).every((val, i) => val === i + 1)) {
+        setTimeout(() => alert('تبریک! شما برنده شدید 🎉'), 100);
+      }
+    }
+
+    shuffle();
+  </script>
+
+</body>
+</html>
